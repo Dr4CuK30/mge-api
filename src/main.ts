@@ -1,14 +1,39 @@
+import { ResponseInterceptor } from './shared/interceptors/response.interceptor';
+import { CustomExceptionFilter } from './shared/errors/http-exception.filter';
+import { CustomHttpException } from './shared/errors/custom-exceptions';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { errorTypes } from './shared/errors/error-types';
 import { welcome } from './shared/utils/welcome';
-import { VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Global confogiration
   app.enableVersioning({
     type: VersioningType.URI,
   });
+  app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalFilters(new CustomExceptionFilter());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      exceptionFactory: (errors) => {
+        return new CustomHttpException(
+          errorTypes.VALIDATION_ERROR,
+          errors.reduce(
+            (acum: string[], error) =>
+              acum.concat(...Object.values(error.constraints)),
+            [],
+          ),
+        );
+      },
+    }),
+  );
+
   const configService = app.get(ConfigService);
   const port = configService.get<number>('app.port');
   await app.listen(port);

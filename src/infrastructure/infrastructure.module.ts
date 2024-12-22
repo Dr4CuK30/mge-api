@@ -4,6 +4,7 @@ import { dataSourceFactory } from './database/connection';
 import { configSchema } from './schemas/config.schema';
 import { TypeOrmConfigService } from './database/db';
 import appConfig from './environment/app.config';
+import jwtConfig from './environment/jwt.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
 
@@ -11,7 +12,7 @@ import { Module } from '@nestjs/common';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig],
+      load: [appConfig, databaseConfig, jwtConfig],
       validationSchema: configSchema,
     }),
     TypeOrmModule.forRootAsync({
