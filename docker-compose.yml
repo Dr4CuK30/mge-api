@@ -1,0 +1,23 @@
+version: '3'
+services:
+  redis_mge:
+    image: redis:latest
+    container_name: redis_mge
+    ports:
+      - 6379:${REDIS_PORT}
+    networks:
+      - mge_net
+  postgres_mge:
+    image: postgres:latest
+    container_name: postgres_mge
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - 5432:${POSTGRES_PORT}
+    networks:
+      - mge_net
+networks:
+  mge_net:
+    name: mge_net
