@@ -10,7 +10,7 @@ import {
 import { OrganizationalUnit } from '../../transfer/entities/organizational-unit.entity';
 import { Transfer } from '../../transfer/entities/transfer.entity';
 import { Project } from '../../transfer/entities/project.entity';
-import { Role } from '../../auth/entities/role.entity';
+import { Role } from './role.entity';
 
 @Entity('users')
 export class User {

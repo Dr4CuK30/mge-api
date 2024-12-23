@@ -1,6 +1,14 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import { User } from '../user/entities/user.entity';
+import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dtos/login.dto';
 
 @Controller({
   version: '1',
@@ -8,9 +16,11 @@ import { LoginDto } from './dtos/login.dto';
 })
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @UseGuards(AuthGuard('local'))
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  login(@Body() body: LoginDto) {
-    return this.authService.login(body.username, body.password);
+  login(@Request() req: { user: Partial<User> }) {
+    return this.authService.login(req.user);
   }
 }

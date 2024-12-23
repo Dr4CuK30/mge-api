@@ -1,5 +1,4 @@
-import { CustomHttpException } from 'src/shared/errors/custom-exceptions';
-import { errorTypes } from 'src/shared/errors/error-types';
+import { User } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -12,15 +11,16 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.find({ username });
+  async validate(username: string, pass: string): Promise<Partial<User>> {
+    const user = await this.usersService.findUser({ username });
     if (!user || !bcrypt.compareSync(pass, user.passwordHash)) {
-      throw new CustomHttpException(
-        errorTypes.INVALID_CREDENTIALS,
-        'username or password is incorrect',
-      );
+      return null;
     }
     delete user.passwordHash;
+    return user;
+  }
+
+  async login(user: Partial<User>): Promise<any> {
     return {
       token: await this.jwtService.signAsync({ ...user }),
     };

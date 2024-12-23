@@ -4,8 +4,9 @@ import { errorTypes } from 'src/shared/errors/error-types';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
+import { Role } from './entities/role.entity';
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -13,10 +14,15 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
   ) {}
 
-  async find(data: Partial<User>) {
-    return this.userRepository.findOneBy(data);
+  async findUser(data: Partial<User>) {
+    return this.userRepository.findOne({
+      where: data,
+      relations: ['roles', 'roles.permissions'],
+    });
   }
 
   async createUser(data: CreateUserDto) {
@@ -38,5 +44,27 @@ export class UserService {
     await this.userRepository.save(userCreated);
     delete userCreated.passwordHash;
     return userCreated;
+  }
+
+  async updateUserRoles(username: string, roles: string[]) {
+    const user = await this.findUser({ username });
+    if (!user) {
+      throw new CustomHttpException(
+        errorTypes.USER_NOT_FOUND,
+        'user not found',
+      );
+    }
+    const rolesEntities = await this.roleRepository.findBy({
+      name: In(roles),
+    });
+    if (rolesEntities.length !== roles.length) {
+      throw new CustomHttpException(
+        errorTypes.ROLE_NOT_FOUND,
+        'some role was not found',
+      );
+    }
+    user.roles = rolesEntities;
+    await this.userRepository.save(user);
+    return rolesEntities;
   }
 }
