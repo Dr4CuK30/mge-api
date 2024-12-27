@@ -11,13 +11,18 @@ import { Module } from '@nestjs/common';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        const host = configService.get('REDIS_HOST');
-        const port = configService.get('REDIS_PORT');
+        const url = configService.get('REDIS_URL');
+        const config: any = {};
+        if (url) {
+          config.url = url;
+        } else {
+          const host = configService.get('REDIS_HOST');
+          const port = configService.get('REDIS_PORT');
+          config.socket = { host, port };
+        }
+
         const store = await redisStore({
-          socket: {
-            host,
-            port,
-          },
+          ...config,
           ttl: MILLISECONDS.ONE_MINUTE,
         });
         return { store, ttl: MILLISECONDS.ONE_MINUTE };
