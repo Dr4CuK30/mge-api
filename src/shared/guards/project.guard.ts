@@ -60,12 +60,6 @@ export class ProjectGuard implements CanActivate {
     if (
       !user.organizationalUnits.some(
         (organizationalUnit) => organizationalUnit.id === organizationalUnitId,
-      ) ||
-      !user.projects.some((project) =>
-        project.organizationalUnits.some(
-          (organizationalUnit) =>
-            organizationalUnit.id === organizationalUnitId,
-        ),
       )
     ) {
       throw new CustomHttpException(
