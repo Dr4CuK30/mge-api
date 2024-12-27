@@ -11,6 +11,7 @@ import { welcome } from './shared/utils/welcome';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -41,6 +42,26 @@ function setGlobalConfigurations(app: INestApplication) {
           ),
         );
       },
+    }),
+  );
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          styleSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:'],
+          connectSrc: ["'self'"],
+          fontSrc: ["'self'", 'data:'],
+          objectSrc: ["'none'"],
+          frameSrc: ["'self'"],
+        },
+      },
+      referrerPolicy: { policy: 'no-referrer' },
+      hsts: { includeSubDomains: true, preload: true },
+      noSniff: true,
+      xssFilter: true,
     }),
   );
 }

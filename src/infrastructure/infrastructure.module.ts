@@ -1,28 +1,22 @@
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { DatabaseModule } from './database/database.module';
 import databaseConfig from './environment/database.config';
-import { dataSourceFactory } from './database/connection';
 import { configSchema } from './schemas/config.schema';
-import { TypeOrmConfigService } from './database/db';
+import cacheConfig from './environment/cache.config';
+import { RedisModule } from './cache/cache.module';
 import appConfig from './environment/app.config';
 import jwtConfig from './environment/jwt.config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig, jwtConfig],
+      load: [appConfig, databaseConfig, jwtConfig, cacheConfig],
       validationSchema: configSchema,
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useClass: TypeOrmConfigService,
-      dataSourceFactory,
-    }),
+    DatabaseModule,
+    RedisModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class InfrastructureModule {}
