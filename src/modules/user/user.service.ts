@@ -21,7 +21,13 @@ export class UserService {
   async findUser(data: Partial<User>) {
     return this.userRepository.findOne({
       where: data,
-      relations: ['roles', 'roles.permissions'],
+      relations: [
+        'roles',
+        'roles.permissions',
+        'projects',
+        'projects.organizationalUnits',
+        'organizationalUnits',
+      ],
     });
   }
 

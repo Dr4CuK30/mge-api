@@ -24,7 +24,7 @@ export class Transfer {
 
   @ManyToOne(() => Vehicle, (vehicle) => vehicle.transfers)
   @JoinColumn({ name: 'vehicle_id' })
-  vehicles: Vehicle[];
+  vehicle: Vehicle;
 
   @ManyToOne(() => User, (user) => user.clientTransfers)
   @JoinColumn({ name: 'client_id' })

@@ -1,7 +1,8 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Permission } from 'src/modules/user/entities/permission.entity';
 import { PERMISSIONS_KEY } from 'src/shared/constants/general.constants';
 import { CustomHttpException } from '../errors/custom-exceptions';
+import { ExtendedRequest } from '../dtos/extended-request.dto';
+import { Permission } from '../enums/permissions.enum';
 import { errorTypes } from '../errors/error-types';
 import { Reflector } from '@nestjs/core';
 
@@ -10,7 +11,8 @@ export class PermissionsGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const user = context.switchToHttp().getRequest().user;
+    const request = context.switchToHttp().getRequest() as ExtendedRequest;
+    const user = request.user;
     const userPermissions = user.roles
       .flatMap((role) => role.permissions)
       .map((permission) => permission.name);
