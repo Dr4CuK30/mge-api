@@ -3,6 +3,7 @@ import { UserService } from '../user/user.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -20,9 +21,13 @@ export class AuthService {
     return user;
   }
 
-  async login(user: Partial<User>): Promise<any> {
-    return {
-      token: await this.jwtService.signAsync({ ...user }),
-    };
+  async login(user: Partial<User>, response: Response): Promise<any> {
+    const token = await this.jwtService.signAsync({ ...user });
+    response.cookie('Authentication', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+    return { message: 'Login successful' };
   }
 }

@@ -9,6 +9,7 @@ import { CustomHttpException } from './shared/errors/custom-exceptions';
 import { errorTypes } from './shared/errors/error-types';
 import { welcome } from './shared/utils/welcome';
 import { ConfigService } from '@nestjs/config';
+import * as cookieParser from 'cookie-parser';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
@@ -64,6 +65,7 @@ function setGlobalConfigurations(app: INestApplication) {
       xssFilter: true,
     }),
   );
+  app.use(cookieParser());
 }
 
 bootstrap();
