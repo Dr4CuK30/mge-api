@@ -31,6 +31,17 @@ Este proyecto es una API desarrollada como prueba tecnica. A continuación se de
 - Node.js
 - Postman
 
+## Levantamiento servicios necesarios con Docker Compose
+1. Construye y levanta los contenedores:
+  ```bash
+  docker-compose up --build
+  ```
+
+2. Para detener los contenedores:
+  ```bash
+  docker-compose down
+  ```
+
 ## Configuración del Entorno
 1. Clona el repositorio:
   ```bash
@@ -45,15 +56,14 @@ Este proyecto es una API desarrollada como prueba tecnica. A continuación se de
 
 3. Edita el archivo `.env` con las variables de entorno necesarias.
 
-## Ejecución con Docker Compose
-1. Construye y levanta los contenedores:
+4. Ejecuta la instalación de dependencias:
   ```bash
-  docker-compose up --build
+  npm install
   ```
 
-2. Para detener los contenedores:
+5. Ejecuta el proyecto:
   ```bash
-  docker-compose down
+  npm run start:dev
   ```
 
 ## Importar la Colección de Postman
