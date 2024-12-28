@@ -25,6 +25,15 @@
 ## Descripción
 Este proyecto es una API desarrollada como prueba tecnica. A continuación se detallan los pasos para montar el proyecto, incluyendo la configuración del entorno, la ejecución con Docker y la importación de la colección de Postman.
 
+## Caracteristicas
+
+- Aplicación construida con NestJS y TypeORM.
+- Sincronización de entidades en código con la base de datos conectada (no se usaron migraciones).
+- Seguridad de los endpoints de transferencias con JWT, Cookies Seguras y Guards de validación de distintos permisos (Unidad organizacional, roles, permisos y proyectos).
+- Cache de peticiones GET por 1 minuto usando REDIS
+- Headers de seguridad aplicados con ayuda de helmet
+- Respuestas y codigos de error estandarizados.
+
 ## Requisitos
 - Docker
 - Docker Compose
